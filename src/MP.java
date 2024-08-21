@@ -13,7 +13,9 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDlet;
@@ -50,7 +52,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 
 	// threading
 	private static boolean running;
-	private int run;
+	private static int run;
 	
 	// settings
 	private static String user = "";
@@ -104,9 +106,9 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 	
 	public void run() {
 		int run;
-		synchronized(this) {
-			run = this.run;
-			this.notifyAll();
+		synchronized (this) {
+			run = MP.run;
+			notify();
 		}
 		running = true;
 		switch (run) {
@@ -149,11 +151,11 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				JSONObject j = api("getDialogs&limit=15");
 				dialogs = j.getArray("dialogs");
 				
-				JSONObject msgs = j.getNullableObject("messages");
-				
-				JSONObject chats = j.getObject("chats");
-				JSONObject users = j.getObject("users");
+				JSONObject chats = j.getNullableObject("chats");
+				JSONObject users = j.getNullableObject("users");
 				fillPeersCache(users, chats);
+				
+				JSONObject msgs = j.getNullableObject("messages");
 				
 				for (int i = 0, l = dialogs.size(); i < l; ++i) {
 					JSONObject dialog = dialogs.getObject(i);
@@ -173,29 +175,64 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 
 					JSONObject msg = msgs.getObject(id);
 					if (msg != null) {
-						m = oneLine(msg.getString("text"));
-						if (m == null) m = "";
+						m = oneLine(msg.getString("text", ""));
 					}
 					
 					dialogsList.append(title.concat("\n").concat(m), null);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				display(errorAlert(e.toString()));
 			}
 			break;
 		}
 		case RUN_CHAT: {
 			try {
+				Form f = chatForm;
+				
 				if (writeBox != null) {
 					writeBox.setString("");
 				}
-				chatForm.deleteAll();
+				f.deleteAll();
 				
+				JSONObject j = api("getHistory&peer=".concat(currentChatPeer));
 				
+				JSONObject chats = j.getNullableObject("chats");
+				JSONObject users = j.getNullableObject("users");
+				fillPeersCache(users, chats);
+				
+				JSONArray msgs = j.getArray("messages");
+				
+				StringItem s;
+				for (int i = 0, l = msgs.size(); i < l; ++i) {
+					JSONObject msg = msgs.getObject(i);
+					s = new StringItem(getName(msg.getString("from_id")), msg.getString("text", "No message"));
+					s.setLayout(Item.LAYOUT_LEFT | Item.LAYOUT_NEWLINE_AFTER | Item.LAYOUT_NEWLINE_BEFORE);
+					
+					f.append(s);
+				}
+				if (f == chatForm) display(chatForm);
 			} catch (Exception e) {
 				e.printStackTrace();
+				display(errorAlert(e.toString()));
 			}
 			break;
+		}
+		case RUN_SEND: {
+			try {
+				String s = writeBox.getString();
+				writeBox.setString("");
+				
+				api("sendMessage&peer=".concat(currentChatPeer).concat("&text=").concat(url(s)));
+				
+				display(chatForm);
+				MP.run = RUN_CHAT;
+				run();
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+				display(errorAlert(e.toString()), chatForm);
+			}
 		}
 		}
 		running = false;
@@ -220,12 +257,14 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 					writeBox.addCommand(sendCmd);
 					writeBox.setCommandListener(this);
 				}
+				display(writeBox);
 				return;
 			}
 		}
 		if (d == writeBox) {
 			if (c == sendCmd) {
 				display(loadingAlert(), chatForm);
+				start(RUN_SEND);
 				return;
 			}
 			if (c == backCmd) {
@@ -242,7 +281,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				chatForm.addCommand(backCmd);
 				chatForm.addCommand(writeCmd);
 				chatForm.setCommandListener(this);
-				display(chatForm);
+				display(loadingAlert(), dialogsList);
 				
 				start(RUN_CHAT);
 				return;

@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
-	<classpathentry kind="con" path="org.elipse.mtj.JavaMEContainer/KEmulator nnmod/KEmulator"/>
+	<classpathentry kind="con" path="org.elipse.mtj.JavaMEContainer/Nokia Symbian3 SDK v1.0 /SymbianDevice"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

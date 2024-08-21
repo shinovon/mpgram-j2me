@@ -5,7 +5,7 @@
       <alias/>
    </signing>
    <configurations>
-      <configuration active="true" name="KEmulator">
+      <configuration active="false" name="KEmulator">
          <device group="KEmulator nnmod" name="KEmulator"/>
          <symbolSet name="KEmulator">
             <symbol name="NOKIAUI" value="1.6"/>
@@ -31,7 +31,7 @@
             <symbol name="JSR75" value="1.0"/>
          </symbolSet>
       </configuration>
-      <configuration active="false" name="SymbianDevice">
+      <configuration active="true" name="SymbianDevice">
          <device group="Nokia Symbian3 SDK v1.0 " name="SymbianDevice"/>
          <symbolSet name="SymbianDevice">
             <symbol name="NOKIAUI" value="1.4"/>

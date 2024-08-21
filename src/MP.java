@@ -48,14 +48,14 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 	private static TextBox writeBox;
 
 	// ui elements
-	private TextField tokenField;
+	private static TextField tokenField;
 
 	// threading
 	private static boolean running;
 	private static int run;
 	
 	// settings
-	private static String user = "";
+	private static String user;
 	private static String instance = "http://mp2.nnchan.ru/";
 	
 	private static JSONArray dialogs;
@@ -91,14 +91,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		}
 		
 		if (user == null) {
-			authForm = new Form("Auth");
-			authForm.addCommand(authCmd);
-			authForm.setCommandListener(this);
-			
-			tokenField = new TextField("Token", "", 200, TextField.ANY);
-			authForm.append(tokenField);
-			
-			display(authForm);
+			display(authForm());
 		} else {
 			start(RUN_AUTH);
 		}
@@ -141,7 +134,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				display(errorAlert(e.toString()));
+				display(errorAlert(e.toString()), authForm());
 				break;
 			}
 		}
@@ -238,14 +231,16 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		running = false;
 	}
 
-	private void start(int r) {
+	Thread start(int i) {
+		Thread t = null;
 		try {
-			synchronized (this) {
-				run = r;
-				new Thread(this).start();
-				this.wait();
+			synchronized(this) {
+				run = i;
+				(t = new Thread(this)).start();
+				wait();
 			}
-		} catch (Exception ignored) {}
+		} catch (Exception e) {}
+		return t;
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -300,6 +295,19 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		if (c == exitCmd) {
 			notifyDestroyed();
 		}
+	}
+
+	private Form authForm() {
+		if (authForm != null) return authForm;
+		
+		authForm = new Form("Auth");
+		authForm.addCommand(authCmd);
+		authForm.setCommandListener(this);
+		
+		tokenField = new TextField("User session", "", 200, TextField.ANY);
+		authForm.append(tokenField);
+		
+		return authForm;
 	}
 
 	private static void fillPeersCache(JSONObject users, JSONObject chats) {

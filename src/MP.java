@@ -196,10 +196,13 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				
 				JSONArray msgs = j.getArray("messages");
 				
+				String t = getName(currentChatPeer);
+				
 				StringItem s;
 				for (int i = 0, l = msgs.size(); i < l; ++i) {
 					JSONObject msg = msgs.getObject(i);
-					s = new StringItem(getName(msg.getString("from_id")), msg.getString("text", "No message"));
+					s = new StringItem(msg.has("from_id") ? getName(msg.getString("from_id")) : t,
+							msg.getString("text", "No message"));
 					s.setLayout(Item.LAYOUT_LEFT | Item.LAYOUT_NEWLINE_AFTER | Item.LAYOUT_NEWLINE_BEFORE);
 					
 					f.append(s);

@@ -30,7 +30,7 @@ import java.util.Vector;
  * Usage:<p><code>JSONObject obj = getObject(str);</code></p>
  * <b>Use with proguard argument</b>: <p><code>-optimizations !code/simplification/object</code>
  * @author Shinovon
- * @version 2.2 (Shrinked)
+ * @version 2.2 (Minimum)
  */
 public class JSONObject {
 
@@ -44,12 +44,12 @@ public class JSONObject {
 		this.table = table;
 	}
 
-	/**
-	 * @deprecated Compatibility with org.json
-	 */
-	public JSONObject(String str) {
-		table = parseObject(str).table; // FIXME
-	}
+//	/**
+//	 * @deprecated Compatibility with org.json
+//	 */
+//	public JSONObject(String str) {
+//		table = parseObject(str).table; // FIXME
+//	}
 	
 	public Object get(String name) {
 		try {
@@ -256,89 +256,90 @@ public class JSONObject {
 	}
 	
 	public String toString() {
-		return build();
+//		return build();
+		return table.toString();
 	}
 	
-	public boolean equals(Object obj) {
-		return this == obj || super.equals(obj) || similar(obj);
-	}
+//	public boolean equals(Object obj) {
+//		return this == obj || super.equals(obj) || similar(obj);
+//	}
 	
-	public boolean similar(Object obj) {
-		if (!(obj instanceof JSONObject)) {
-			return false;
-		}
-		if (table.equals(((JSONObject) obj).table)) {
-			return true;
-		}
-		int size = size();
-		if (size != ((JSONObject)obj).size()) {
-			return false;
-		}
-		Enumeration keys = table.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			Object a = get(key);
-			Object b = ((JSONObject)obj).get(key);
-			if (a == b) {
-				continue;
-			}
-			if (a == null) {
-				return false;
-			}
-			if (a instanceof JSONObject) {
-				if (!((JSONObject)a).similar(b)) {
-					return false;
-				}
-			} else if (!a.equals(b)) {
-				return false;
-			}
-		}
-		return true;
-	}
+//	public boolean similar(Object obj) {
+//		if (!(obj instanceof JSONObject)) {
+//			return false;
+//		}
+//		if (table.equals(((JSONObject) obj).table)) {
+//			return true;
+//		}
+//		int size = size();
+//		if (size != ((JSONObject)obj).size()) {
+//			return false;
+//		}
+//		Enumeration keys = table.keys();
+//		while (keys.hasMoreElements()) {
+//			String key = (String) keys.nextElement();
+//			Object a = get(key);
+//			Object b = ((JSONObject)obj).get(key);
+//			if (a == b) {
+//				continue;
+//			}
+//			if (a == null) {
+//				return false;
+//			}
+//			if (a instanceof JSONObject) {
+//				if (!((JSONObject)a).similar(b)) {
+//					return false;
+//				}
+//			} else if (!a.equals(b)) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
-	public String build() {
-		if (size() == 0)
-			return "{}";
-		StringBuffer s = new StringBuffer("{");
-		Enumeration keys = table.keys();
-		while (true) {
-			String k = (String) keys.nextElement();
-			s.append("\"").append(k).append("\":");
-			Object v = table.get(k);
-			if (v instanceof JSONObject) {
-				s.append(((JSONObject) v).build());
-			} else if (v instanceof JSONArray) {
-				s.append(((JSONArray) v).build());
-			} else if (v instanceof String) {
-				s.append("\"").append(escape_utf8((String) v)).append("\"");
-			} else if (v instanceof String[]) {
-				s.append(((String[]) v)[0]);
-			} else if (v == json_null) {
-				s.append((String) null);
-			} else {
-				s.append(v);
-			}
-			if (!keys.hasMoreElements()) {
-				break;
-			}
-			s.append(",");
-		}
-		s.append("}");
-		return s.toString();
-	}
+//	public String build() {
+//		if (size() == 0)
+//			return "{}";
+//		StringBuffer s = new StringBuffer("{");
+//		Enumeration keys = table.keys();
+//		while (true) {
+//			String k = (String) keys.nextElement();
+//			s.append("\"").append(k).append("\":");
+//			Object v = table.get(k);
+//			if (v instanceof JSONObject) {
+//				s.append(((JSONObject) v).build());
+//			} else if (v instanceof JSONArray) {
+//				s.append(((JSONArray) v).build());
+//			} else if (v instanceof String) {
+//				s.append("\"").append(escape_utf8((String) v)).append("\"");
+//			} else if (v instanceof String[]) {
+//				s.append(((String[]) v)[0]);
+//			} else if (v == json_null) {
+//				s.append((String) null);
+//			} else {
+//				s.append(v);
+//			}
+//			if (!keys.hasMoreElements()) {
+//				break;
+//			}
+//			s.append(",");
+//		}
+//		s.append("}");
+//		return s.toString();
+//	}
 
 	public Enumeration keys() {
 		return table.keys();
 	}
 
-	public JSONArray keysAsArray() {
-		JSONArray array = new JSONArray(table.size());
-		Enumeration keys = table.keys();
-		while (keys.hasMoreElements()) {
-			array.addElement(keys.nextElement());
-		}
-		return array;
-	}
+//	public JSONArray keysAsArray() {
+//		JSONArray array = new JSONArray(table.size());
+//		Enumeration keys = table.keys();
+//		while (keys.hasMoreElements()) {
+//			array.addElement(keys.nextElement());
+//		}
+//		return array;
+//	}
 	
 	/**
 	 * @deprecated Use {@link JSONObject#toTable()} instead
@@ -371,7 +372,7 @@ public class JSONObject {
 	static final boolean parse_members = false;
 	
 	// identation for formatting
-	static final String FORMAT_TAB = "  ";
+//	static final String FORMAT_TAB = "  ";
 	
 	// used for storing nulls, get methods must return real null
 	public static final Object json_null = new Object();
@@ -596,48 +597,48 @@ public class JSONObject {
 	}
 
 	// transforms string for exporting
-	static String escape_utf8(String s) {
-		int len = s.length();
-		StringBuffer sb = new StringBuffer();
-		int i = 0;
-		while (i < len) {
-			char c = s.charAt(i);
-			switch (c) {
-			case '"':
-			case '\\':
-				sb.append("\\").append(c);
-				break;
-			case '\b':
-				sb.append("\\b");
-				break;
-			case '\f':
-				sb.append("\\f");
-				break;
-			case '\n':
-				sb.append("\\n");
-				break;
-			case '\r':
-				sb.append("\\r");
-				break;
-			case '\t':
-				sb.append("\\t");
-				break;
-			default:
-				if (c < 32 || c > 1103 || (c >= '\u0080' && c < '\u00a0')) {
-					String u = Integer.toHexString(c);
-					sb.append("\\u");
-					for (int z = u.length(); z < 4; z++) {
-						sb.append('0');
-					}
-					sb.append(u);
-				} else {
-					sb.append(c);
-				}
-			}
-			i++;
-		}
-		return sb.toString();
-	}
+//	static String escape_utf8(String s) {
+//		int len = s.length();
+//		StringBuffer sb = new StringBuffer();
+//		int i = 0;
+//		while (i < len) {
+//			char c = s.charAt(i);
+//			switch (c) {
+//			case '"':
+//			case '\\':
+//				sb.append("\\").append(c);
+//				break;
+//			case '\b':
+//				sb.append("\\b");
+//				break;
+//			case '\f':
+//				sb.append("\\f");
+//				break;
+//			case '\n':
+//				sb.append("\\n");
+//				break;
+//			case '\r':
+//				sb.append("\\r");
+//				break;
+//			case '\t':
+//				sb.append("\\t");
+//				break;
+//			default:
+//				if (c < 32 || c > 1103 || (c >= '\u0080' && c < '\u00a0')) {
+//					String u = Integer.toHexString(c);
+//					sb.append("\\u");
+//					for (int z = u.length(); z < 4; z++) {
+//						sb.append('0');
+//					}
+//					sb.append(u);
+//				} else {
+//					sb.append(c);
+//				}
+//			}
+//			i++;
+//		}
+//		return sb.toString();
+//	}
 
 	static int getInt(Object o) {
 		try {

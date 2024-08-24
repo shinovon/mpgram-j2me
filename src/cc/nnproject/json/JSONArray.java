@@ -351,69 +351,69 @@ public class JSONArray {
 		return count == 0;
 	}
 	
-	public String toString() {
-		return build();
-	}
+//	public String toString() {
+//		return build();
+//	}
 	
-	public boolean equals(Object obj) {
-		return this == obj || super.equals(obj) || similar(obj);
-	}
+//	public boolean equals(Object obj) {
+//		return this == obj || super.equals(obj) || similar(obj);
+//	}
 	
-	public boolean similar(Object obj) {
-		if (!(obj instanceof JSONArray)) {
-			return false;
-		}
-		int size = count;
-		if (size != ((JSONArray)obj).count) {
-			return false;
-		}
-		for (int i = 0; i < size; i++) {
-			Object a = get(i);
-			Object b = ((JSONArray)obj).get(i);
-			if (a == b) {
-				continue;
-			}
-			if (a == null) {
-				return false;
-			}
-			if (a instanceof JSONArray) {
-				if (!((JSONArray)a).similar(b)) {
-					return false;
-				}
-			} else if (!a.equals(b)) {
-				return false;
-			}
-		}
-		return true;
-	}
+//	public boolean similar(Object obj) {
+//		if (!(obj instanceof JSONArray)) {
+//			return false;
+//		}
+//		int size = count;
+//		if (size != ((JSONArray)obj).count) {
+//			return false;
+//		}
+//		for (int i = 0; i < size; i++) {
+//			Object a = get(i);
+//			Object b = ((JSONArray)obj).get(i);
+//			if (a == b) {
+//				continue;
+//			}
+//			if (a == null) {
+//				return false;
+//			}
+//			if (a instanceof JSONArray) {
+//				if (!((JSONArray)a).similar(b)) {
+//					return false;
+//				}
+//			} else if (!a.equals(b)) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
-	public String build() {
-		int size = count;
-		if (size == 0)
-			return "[]";
-		StringBuffer s = new StringBuffer("[");
-		int i = 0;
-		while (i < size) {
-			Object v = elements[i];
-			if (v instanceof JSONObject) {
-				s.append(((JSONObject) v).build());
-			} else if (v instanceof JSONArray) {
-				s.append(((JSONArray) v).build());
-			} else if (v instanceof String) {
-				s.append("\"").append(JSONObject.escape_utf8((String) v)).append("\"");
-			} else if (v == JSONObject.json_null) {
-				s.append((String) null);
-			} else {
-				s.append(String.valueOf(v));
-			}
-			i++;
-			if (i < size) {
-				s.append(",");
-			}
-		}
-		s.append("]");
-		return s.toString();
-	}
+//	public String build() {
+//		int size = count;
+//		if (size == 0)
+//			return "[]";
+//		StringBuffer s = new StringBuffer("[");
+//		int i = 0;
+//		while (i < size) {
+//			Object v = elements[i];
+//			if (v instanceof JSONObject) {
+//				s.append(((JSONObject) v).build());
+//			} else if (v instanceof JSONArray) {
+//				s.append(((JSONArray) v).build());
+//			} else if (v instanceof String) {
+//				s.append("\"").append(JSONObject.escape_utf8((String) v)).append("\"");
+//			} else if (v == JSONObject.json_null) {
+//				s.append((String) null);
+//			} else {
+//				s.append(String.valueOf(v));
+//			}
+//			i++;
+//			if (i < size) {
+//				s.append(",");
+//			}
+//		}
+//		s.append("]");
+//		return s.toString();
+//	}
 
 	public Enumeration elements() {
 		return new Enumeration() {

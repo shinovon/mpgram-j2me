@@ -46,6 +46,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 	private static List dialogsList;
 	private static Form chatForm;
 	private static TextBox writeBox;
+	private static Form loadingForm;
 
 	// ui elements
 	private static TextField tokenField;
@@ -90,6 +91,10 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 			e.printStackTrace();
 		}
 		
+		loadingForm = new Form("mpgram");
+		loadingForm.append("Loading");
+		display(loadingForm);
+		
 		if (user == null) {
 			display(authForm());
 		} else {
@@ -113,13 +118,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				usersCache = new JSONObject();
 				chatsCache = new JSONObject();
 				
-				dialogsList = new List("Dialogs", List.IMPLICIT);
-				dialogsList.addCommand(exitCmd);
-				dialogsList.addCommand(List.SELECT_COMMAND);
-				dialogsList.setCommandListener(this);
-				dialogsList.setFitPolicy(List.TEXT_WRAP_ON);
-				
-				display(dialogsList);
+				display(loadingForm);
 				
 				try {
 					RecordStore.deleteRecordStore("mpgramuser");
@@ -140,7 +139,13 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		}
 		case RUN_DIALOGS: {
 			try {
-				dialogsList.deleteAll();
+				List list = dialogsList = new List("mpgram", List.IMPLICIT);
+				list.addCommand(exitCmd);
+				list.addCommand(List.SELECT_COMMAND);
+				list.setCommandListener(this);
+//				dialogsList.setFitPolicy(List.TEXT_WRAP_ON);
+				
+//				dialogsList.deleteAll();
 				JSONObject j = api("getDialogs&limit=15");
 				dialogs = j.getArray("dialogs");
 				
@@ -165,28 +170,31 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 						p = users.getNullableObject(id);
 						if (p != null) title = getName(p);
 					}
-
-					JSONObject msg = msgs.getObject(id);
-					if (msg != null) {
-						m = oneLine(msg.getString("text", ""));
-					}
 					
-					dialogsList.append(title.concat("\n").concat(m), null);
+					list.append(title, null);
+				}
+				
+				if (dialogsList == list) {
+					display(list);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				display(errorAlert(e.toString()));
+				display(errorAlert(e.toString()), dialogsList);
 			}
 			break;
 		}
 		case RUN_CHAT: {
 			try {
-				Form f = chatForm;
+				String title = getName(currentChatPeer, false);
+				Form f = chatForm = new Form(title == null ? "Chat" : title);
+				f.addCommand(backCmd);
+				f.addCommand(writeCmd);
+				f.setCommandListener(this);
 				
 				if (writeBox != null) {
 					writeBox.setString("");
 				}
-				f.deleteAll();
+//				f.deleteAll();
 				
 				JSONObject j = api("getHistory&peer=".concat(currentChatPeer));
 				
@@ -201,16 +209,18 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				StringItem s;
 				for (int i = 0, l = msgs.size(); i < l; ++i) {
 					JSONObject msg = msgs.getObject(i);
+					StringBuffer sb = new StringBuffer(msg.getString("text", ""));
+					if (sb.length() != 0) sb.append('\n');
+					if (msg.has("media")) sb.append("(Media)");
 					s = new StringItem(msg.has("from_id") ? getName(msg.getString("from_id")) : t,
-							msg.getString("text", "No message"));
-					s.setLayout(Item.LAYOUT_LEFT | Item.LAYOUT_NEWLINE_AFTER | Item.LAYOUT_NEWLINE_BEFORE);
+							sb.toString());
 					
 					f.append(s);
 				}
 				if (f == chatForm) display(chatForm);
 			} catch (Exception e) {
 				e.printStackTrace();
-				display(errorAlert(e.toString()));
+				display(errorAlert(e.toString()), chatForm);
 			}
 			break;
 		}
@@ -274,11 +284,8 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 			if (c == List.SELECT_COMMAND) {
 				int i = ((List) d).getSelectedIndex();
 				if (i == -1 || running) return;
-				String title = getName(currentChatPeer = dialogs.getObject(i).getString("id"), false);
-				chatForm = new Form(title == null ? "Chat" : title);
-				chatForm.addCommand(backCmd);
-				chatForm.addCommand(writeCmd);
-				chatForm.setCommandListener(this);
+				currentChatPeer = dialogs.getObject(i).getString("id");
+				
 				display(loadingAlert(), dialogsList);
 				
 				start(RUN_CHAT);
@@ -305,6 +312,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		
 		authForm = new Form("Auth");
 		authForm.addCommand(authCmd);
+		authForm.addCommand(exitCmd);
 		authForm.setCommandListener(this);
 		
 		tokenField = new TextField("User session", "", 200, TextField.ANY);
@@ -315,7 +323,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 
 	private static void fillPeersCache(JSONObject users, JSONObject chats) {
 		if (users != null && usersCache != null) {
-			if (usersCache.size() > 200) {
+			if (usersCache.size() > 100) {
 				usersCache.clear();
 			}
 			for (Enumeration e = users.keys(); e.hasMoreElements(); ) {
@@ -453,7 +461,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 	
 	private static Alert loadingAlert() {
 		Alert a = new Alert("", "Loading", null, null);
-		a.setIndicator(new Gauge(null, false, Gauge.INDEFINITE, Gauge.CONTINUOUS_RUNNING));
+//		a.setIndicator(new Gauge(null, false, Gauge.INDEFINITE, Gauge.CONTINUOUS_RUNNING));
 		a.setTimeout(30000);
 		return a;
 	}
@@ -479,7 +487,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				hc.close();
 			} catch (IOException e) {}
 		}
-		System.out.println(res);
+//		System.out.println(res);
 		// хендлить ошибки апи
 		if (res.has("error")) {
 			throw new RuntimeException("API error: ".concat(res.getString("error")).concat("\nURL: ").concat(url));
@@ -523,7 +531,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				System.arraycopy(buf, 0, buf = new byte[i + 2048], 0, i);
 			}
 		}
-		return new String(buf, 0, i, "UTF-8");
+		return new String(buf, 0, i);
 	}
 	
 	private static byte[] get(String url) throws IOException {

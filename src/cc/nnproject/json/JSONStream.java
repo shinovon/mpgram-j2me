@@ -598,7 +598,8 @@ public class JSONStream extends Reader {
 					}
 					// decimal
 					if (str.indexOf('.') != -1 || str.indexOf('E') != -1 || "-0".equals(str))
-						return new Double(Double.parseDouble(str));
+//						return new Double(Double.parseDouble(str));
+						throw new RuntimeException("Floating-point values not supported");
 					if (first == '-') length--;
 					if (length > 8) // (str.length() - (str.charAt(0) == '-' ? 1 : 0)) >= 10
 						return new Long(Long.parseLong(str));

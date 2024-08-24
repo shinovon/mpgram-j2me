@@ -23,7 +23,6 @@ package cc.nnproject.json;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 /**
  * JSON Library compatible with CLDC 1.1 & JDK 1.1<br>
@@ -43,13 +42,6 @@ public class JSONObject {
 	public JSONObject(Hashtable table) {
 		this.table = table;
 	}
-
-//	/**
-//	 * @deprecated Compatibility with org.json
-//	 */
-//	public JSONObject(String str) {
-//		table = parseObject(str).table; // FIXME
-//	}
 	
 	public Object get(String name) {
 		try {
@@ -64,7 +56,7 @@ public class JSONObject {
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {}
-		throw new RuntimeException("JSON: No value for name: " + name);
+		throw new RuntimeException("No ".concat(name));
 	}
 	
 	// unused methods should be removed by proguard shrinking
@@ -105,11 +97,7 @@ public class JSONObject {
 	}
 	
 	public JSONObject getObject(String name) {
-		try {
-			return (JSONObject) get(name);
-		} catch (ClassCastException e) {
-			throw new RuntimeException("JSON: Not object: " + name);
-		}
+		return (JSONObject) get(name);
 	}
 	public JSONObject getObject(String name, JSONObject def) {
 		if (has(name)) {
@@ -126,19 +114,14 @@ public class JSONObject {
 	}
 	
 	public JSONArray getArray(String name) {
-		try {
-			return (JSONArray) get(name);
-		} catch (ClassCastException e) {
-			throw new RuntimeException("JSON: Not array: " + name);
-		}
+		return (JSONArray) get(name);
 	}
 	
 	public JSONArray getArray(String name, JSONArray def) {
 		if (has(name)) {
 			try {
 				return (JSONArray) get(name);
-			} catch (Exception e) {
-			}
+			} catch (Exception e) {}
 		}
 		return def;
 	}
@@ -185,7 +168,7 @@ public class JSONObject {
 			if (s.equals("true")) return true;
 			if (s.equals("false")) return false;
 		}
-		throw new RuntimeException("JSON: Not boolean: " + o);
+		throw new RuntimeException("Not boolean ".concat(name));
 	}
 
 	public boolean getBoolean(String name, boolean def) {
@@ -198,40 +181,41 @@ public class JSONObject {
 	}
 	
 	public boolean isNull(String name) {
-		if (!has(name))
-			throw new RuntimeException("JSON: No value for name: " + name);
+//		if (!has(name))
+//			throw new RuntimeException("JSON: No value for name: " + name);
 		return table.get(name) == json_null;
 	}
 	
-	/**
-	 * @deprecated
-	 */
+//	/**
+//	 * @deprecated
+//	 */
 	public void put(String name, Object obj) {
-		table.put(name, getJSON(obj));
+		table.put(name, obj == null ? json_null : obj);
 	}
 	
-	public void put(String name, JSONObject json) {
-		table.put(name, json);
-	}
+//	public void put(String name, JSONObject json) {
+//		table.put(name, json);
+//	}
 	
-	public void put(String name, String s) {
-		table.put(name, s == null ? json_null : s);
-	}
+//	public void put(String name, String s) {
+//		table.put(name, s == null ? json_null : s);
+//	}
 
-	public void put(String name, int i) {
-		table.put(name, new Integer(i));
-	}
-
-	public void put(String name, long l) {
-		table.put(name, new Long(l));
-	}
-	
-	public void put(String name, boolean b) {
-		table.put(name, new Boolean(b));
-	}
+//	public void put(String name, int i) {
+//		table.put(name, new Integer(i));
+//	}
+//
+//	public void put(String name, long l) {
+//		table.put(name, new Long(l));
+//	}
+//	
+//	public void put(String name, boolean b) {
+//		table.put(name, new Boolean(b));
+//	}
 	
 	public boolean hasValue(Object object) {
-		return table.contains(getJSON(object));
+//		return table.contains(getJSON(object));
+		return table.contains(object);
 	}
 	
 	// hasKey
@@ -243,17 +227,17 @@ public class JSONObject {
 		table.clear();
 	}
 	
-	public void remove(String name) {
-		table.remove(name);
-	}
+//	public void remove(String name) {
+//		table.remove(name);
+//	}
 	
 	public int size() {
 		return table.size();
 	}
 	
-	public boolean isEmpty() {
-		return table.isEmpty();
-	}
+//	public boolean isEmpty() {
+//		return table.isEmpty();
+//	}
 	
 	public String toString() {
 //		return build();
@@ -341,30 +325,30 @@ public class JSONObject {
 //		return array;
 //	}
 	
-	/**
-	 * @deprecated Use {@link JSONObject#toTable()} instead
-	 */
-	public Hashtable getTable() {
-		return table;
-	}
-
-	public Hashtable toTable() {
-		Hashtable copy = new Hashtable(table.size());
-		Enumeration keys = table.keys();
-		while (keys.hasMoreElements()) {
-			String k = (String) keys.nextElement();
-			Object v = table.get(k);
-			if (v instanceof String[])
-				table.put(k, v = parseJSON(((String[]) v)[0]));
-			if (v instanceof JSONObject) {
-				v = ((JSONObject) v).toTable();
-			} else if (v instanceof JSONArray) {
-				v = ((JSONArray) v).toVector();
-			}
-			copy.put(k, v);
-		}
-		return copy;
-	}
+//	/**
+//	 * @deprecated Use {@link JSONObject#toTable()} instead
+//	 */
+//	public Hashtable getTable() {
+//		return table;
+//	}
+//
+//	public Hashtable toTable() {
+//		Hashtable copy = new Hashtable(table.size());
+//		Enumeration keys = table.keys();
+//		while (keys.hasMoreElements()) {
+//			String k = (String) keys.nextElement();
+//			Object v = table.get(k);
+//			if (v instanceof String[])
+//				table.put(k, v = parseJSON(((String[]) v)[0]));
+//			if (v instanceof JSONObject) {
+//				v = ((JSONObject) v).toTable();
+//			} else if (v instanceof JSONArray) {
+//				v = ((JSONArray) v).toVector();
+//			}
+//			copy.put(k, v);
+//		}
+//		return copy;
+//	}
 
 	// JSON
 
@@ -381,33 +365,29 @@ public class JSONObject {
 	public static final Boolean FALSE = new Boolean(false);
 
 	public static JSONObject parseObject(String text) {
-		if (text == null || text.length() <= 1)
-			throw new RuntimeException("JSON: Empty text");
-		if (text.charAt(0) != '{')
-			throw new RuntimeException("JSON: Not JSON object");
+		if (text == null || text.length() == 0 || text.charAt(0) != '{')
+			throw new RuntimeException("Not object");
 		return (JSONObject) parseJSON(text);
 	}
 
 	public static JSONArray parseArray(String text) {
-		if (text == null || text.length() <= 1)
-			throw new RuntimeException("JSON: Empty text");
-		if (text.charAt(0) != '[')
-			throw new RuntimeException("JSON: Not JSON array");
+		if (text == null || text.length() == 0 || text.charAt(0) != '[')
+			throw new RuntimeException("Not array");
 		return (JSONArray) parseJSON(text);
 	}
 
-	static Object getJSON(Object obj) {
-		if (obj instanceof Hashtable) {
-			return new JSONObject((Hashtable) obj);
-		}
-		if (obj instanceof Vector) {
-			return new JSONArray((Vector) obj);
-		}
-		if (obj == null) {
-			return json_null;
-		}
-		return obj;
-	}
+//	static Object getJSON(Object obj) {
+//		if (obj instanceof Hashtable) {
+//			return new JSONObject((Hashtable) obj);
+//		}
+//		if (obj instanceof Vector) {
+//			return new JSONArray((Vector) obj);
+//		}
+//		if (obj == null) {
+//			return json_null;
+//		}
+//		return obj;
+//	}
 
 	static Object parseJSON(String str) {
 		char first = str.charAt(0);
@@ -416,7 +396,7 @@ public class JSONObject {
 		switch(first) {
 		case '"': { // string
 			if (last != '"')
-				throw new RuntimeException("JSON: Unexpected end of text");
+				throw new RuntimeException("Unexpected end");
 			if(str.indexOf('\\') != -1) {
 				char[] chars = str.substring(1, length).toCharArray();
 				str = null;
@@ -443,12 +423,12 @@ public class JSONObject {
 												new String(new char[] {chars[i++], chars[i++], chars[i++], chars[i++]}),
 												16));
 										break replace;
-									case 'x':
-										i+=2;
-										sb.append((char) Integer.parseInt(
-												new String(new char[] {chars[i++], chars[i++]}),
-												16));
-										break replace;
+//									case 'x':
+//										i+=2;
+//										sb.append((char) Integer.parseInt(
+//												new String(new char[] {chars[i++], chars[i++]}),
+//												16));
+//										break replace;
 									case 'n':
 										sb.append('\n');
 										i+=2;
@@ -461,14 +441,14 @@ public class JSONObject {
 										sb.append('\t');
 										i+=2;
 										break replace;
-									case 'f':
-										sb.append('\f');
-										i+=2;
-										break replace;
-									case 'b':
-										sb.append('\b');
-										i+=2;
-										break replace;
+//									case 'f':
+//										sb.append('\f');
+//										i+=2;
+//										break replace;
+//									case 'b':
+//										sb.append('\b');
+//										i+=2;
+//										break replace;
 									case '\"':
 									case '\'':
 									case '\\':
@@ -502,7 +482,7 @@ public class JSONObject {
 		case '[': {
 			boolean object = first == '{';
 			if (object ? last != '}' : last != ']')
-				throw new RuntimeException("JSON: Unexpected end of text");
+				throw new RuntimeException("Unexpected end");
 			int brackets = 0;
 			int i = 1;
 			char nextDelimiter = object ? ':' : ',';
@@ -537,7 +517,7 @@ public class JSONObject {
 
 				// fail if unclosed quotes or brackets left
 				if (quote || brackets > 0) {
-					throw new RuntimeException("JSON: Corrupted JSON");
+					throw new RuntimeException("Corrupted JSON");
 				}
 
 				if (object && key == null) {
@@ -572,13 +552,13 @@ public class JSONObject {
 			if ((first >= '0' && first <= '9') || first == '-') {
 				try {
 					// hex
-					if (length > 1 && first == '0' && str.charAt(1) == 'x') {
-						if (length > 9) // str.length() > 10
-							return new Long(Long.parseLong(str.substring(2), 16));
-						return new Integer(Integer.parseInt(str.substring(2), 16));
-					}
+//					if (length > 1 && first == '0' && str.charAt(1) == 'x') {
+//						if (length > 9) // str.length() > 10
+//							return new Long(Long.parseLong(str.substring(2), 16));
+//						return new Integer(Integer.parseInt(str.substring(2), 16));
+//					}
 					// decimal
-					if (str.indexOf('.') != -1 || str.indexOf('E') != -1 || "-0".equals(str))
+					if (str.indexOf('.') != -1 || str.indexOf('E') != -1 /*|| "-0".equals(str)*/)
 //						return new Double(Double.parseDouble(str));
 						return str;
 					if (first == '-') length--;
@@ -587,14 +567,14 @@ public class JSONObject {
 					return new Integer(Integer.parseInt(str));
 				} catch (Exception e) {}
 			}
-			throw new RuntimeException("JSON: Couldn't be parsed: " + str);
+			throw new RuntimeException(str);
 //			return new JSONString(str);
 		}
 	}
 	
-	public static boolean isNull(Object obj) {
-		return obj == json_null || obj == null;
-	}
+//	public static boolean isNull(Object obj) {
+//		return obj == json_null || obj == null;
+//	}
 
 	// transforms string for exporting
 //	static String escape_utf8(String s) {
@@ -642,25 +622,25 @@ public class JSONObject {
 
 	static int getInt(Object o) {
 		try {
-			if (o instanceof String[])
-				return Integer.parseInt(((String[]) o)[0]);
+//			if (o instanceof String[])
+//				return Integer.parseInt(((String[]) o)[0]);
 			if (o instanceof Integer)
 				return ((Integer) o).intValue();
 			if (o instanceof Long)
 				return (int) ((Long) o).longValue();
-		} catch (Throwable e) {}
-		throw new RuntimeException("JSON: Cast to int failed: " + o);
+		} catch (Exception e) {}
+		throw new RuntimeException("Can't cast ".concat(String.valueOf(o)));
 	}
 
 	static long getLong(Object o) {
 		try {
-			if (o instanceof String[])
-				return Long.parseLong(((String[]) o)[0]);
+//			if (o instanceof String[])
+//				return Long.parseLong(((String[]) o)[0]);
 			if (o instanceof Integer)
 				return ((Integer) o).longValue();
 			if (o instanceof Long)
 				return ((Long) o).longValue();
-		} catch (Throwable e) {}
-		throw new RuntimeException("JSON: Cast to long failed: " + o);
+		} catch (Exception e) {}
+		throw new RuntimeException("Can't cast ".concat(String.valueOf(o)));
 	}
 }

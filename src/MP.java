@@ -40,6 +40,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 	private static Command backCmd;
 	private static Command writeCmd;
 	private static Command sendCmd;
+	private static Command updateCmd;
 	
 	// ui
 	private static Form authForm;
@@ -83,6 +84,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		authCmd = new Command("Auth", Command.OK, 1);
 		writeCmd = new Command("Write", Command.SCREEN, 2);
 		sendCmd = new Command("Send", Command.OK, 1);
+		updateCmd = new Command("Update", Command.SCREEN, 3);
 		
 		try {
 			RecordStore r = RecordStore.openRecordStore("mpgramuser", false);
@@ -185,6 +187,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				Form f = chatForm = new Form(title == null ? "Chat" : title);
 				f.addCommand(backCmd);
 				f.addCommand(writeCmd);
+				f.addCommand(updateCmd);
 				f.setCommandListener(this);
 				
 				if (writeBox != null) {
@@ -209,7 +212,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 					JSONObject msg = msgs.getObject(i);
 					time = msg.getLong("date") + tzOffset;
 					if (time == 0 || (time / 86400 != lastTime / 86400)) {
-						c.setTime(new Date(time * 1000L));
+						c.setTime(new Date((time - tzOffset) * 1000L));
 						sb.setLength(0);
 						sb.append(c.get(Calendar.DAY_OF_MONTH));
 						if (sb.length() < 2) sb.insert(0, '0');
@@ -228,11 +231,11 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 					
 					sb.append(' ')
 					.append((time / 3600) % 24);
-					if (sb.length() < 2) sb.insert(0, '0');
+					if (sb.length() < 3) sb.insert(1, '0');
 					
 					sb.append(':')
 					.append((time / 60) % 60);
-					if (sb.length() < 5) sb.insert(3, '0');
+					if (sb.length() < 6) sb.insert(4, '0');
 					
 					label = sb.insert(0, msg.has("from_id") ? getName(msg.getString("from_id")) : title).toString();
 					
@@ -270,16 +273,14 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		running = false;
 	}
 
-	Thread start(int i) {
-		Thread t = null;
+	void start(int i) {
 		try {
-			synchronized(this) {
+			synchronized (this) {
 				run = i;
-				(t = new Thread(this)).start();
+				new Thread(this).start();
 				wait();
 			}
-		} catch (Exception e) {}
-		return t;
+		} catch (Exception ignored) {}
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -292,6 +293,16 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 					writeBox.setCommandListener(this);
 				}
 				display(writeBox);
+				return;
+			}
+			if (c == updateCmd) {
+				display(loadingForm);
+				start(RUN_CHAT);
+				return;
+			}
+			if (c == backCmd) {
+				display(dialogsList, true);
+				chatForm = null;
 				return;
 			}
 		}

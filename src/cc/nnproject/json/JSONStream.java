@@ -51,7 +51,7 @@ public class JSONStream extends Reader {
 		json.init(in);
 		char c = json.nextTrim();
 		if (c != '{' && c != '[')
-			throw new RuntimeException("JSON: getStream: Not json");
+			throw new RuntimeException("getStream: Not json");
 		json.isObject = c == '{';
 		json.usePrev = true;
 		return json;
@@ -62,7 +62,7 @@ public class JSONStream extends Reader {
 		json.reader = r;
 		char c = json.nextTrim();
 		if (c != '{' && c != '[')
-			throw new RuntimeException("JSON: getStream: Not json");
+			throw new RuntimeException("getStream: Not json");
 		json.isObject = c == '{';
 		json.usePrev = true;
 		return json;
@@ -73,7 +73,7 @@ public class JSONStream extends Reader {
 		try {
 			json.init(in);
 			char c = json.nextTrim();
-			if (c != '{') throw new RuntimeException("JSON: getObject: not object");
+			if (c != '{') throw new RuntimeException("getObject: not object");
 			return json.nextObject(false);
 		} finally {
 			json.close();
@@ -85,7 +85,7 @@ public class JSONStream extends Reader {
 		try {
 			json.init(in);
 			char c = json.nextTrim();
-			if (c != '[') throw new RuntimeException("JSON: getArray: not array");
+			if (c != '[') throw new RuntimeException("getArray: not array");
 			return json.nextArray(false);
 		} finally {
 			json.close();
@@ -133,7 +133,7 @@ public class JSONStream extends Reader {
 	public Object nextNumber() throws IOException {
 		Object v = nextValue(true);
 		if (v instanceof String)
-			throw new RuntimeException("JSON: nextNumber: not number: ".concat(String.valueOf(v)));
+			throw new RuntimeException("nextNumber: not number: ".concat(String.valueOf(v)));
 		return v;
 	}
 	
@@ -151,7 +151,7 @@ public class JSONStream extends Reader {
 	// Result is found, if false will skip to the end of object
 	public boolean jumpToKey(String key) throws IOException {
 //		if (!isObject)
-//			throw new RuntimeException("JSON: jumpToKey: not object");
+//			throw new RuntimeException("jumpToKey: not object");
 		
 		char c;
 //		while((c = nextTrim()) != '"' && c != 0);
@@ -161,11 +161,11 @@ public class JSONStream extends Reader {
 			if (nextString(true).equals(key)) {
 				// jump to value
 				if (nextTrim() != ':')
-					throw new RuntimeException("JSON: jumpToKey: malformed object at ".concat(Integer.toString(index)));
+					throw new RuntimeException("jumpToKey: malformed object at ".concat(Integer.toString(index)));
 				return true;
 			}
 			if (nextTrim() != ':')
-				throw new RuntimeException("JSON: jumpToKey: malformed object at ".concat(Integer.toString(index)));
+				throw new RuntimeException("jumpToKey: malformed object at ".concat(Integer.toString(index)));
 			
 //			skipValue();
 			c = nextTrim();
@@ -194,7 +194,7 @@ public class JSONStream extends Reader {
 			}
 			if (c == '}')
 				return false;
-			throw new RuntimeException("JSON: jumpToKey: malformed object at ".concat(Integer.toString(index)));
+			throw new RuntimeException("jumpToKey: malformed object at ".concat(Integer.toString(index)));
 		}
 	}
 	
@@ -253,7 +253,7 @@ public class JSONStream extends Reader {
 //					back();
 //					String s = nextString();
 //					if(nextTrim() != ':')
-//						throw new RuntimeException("JSON: jumpToKey: malformed object at ".concat(Integer.toString(index)));
+//						throw new RuntimeException("jumpToKey: malformed object at ".concat(Integer.toString(index)));
 //					if(key.equals(s)) return true;
 //				} else p = true;
 //			}
@@ -317,7 +317,7 @@ public class JSONStream extends Reader {
 	}
 
 	public void back() {
-		if (usePrev || index <= 0) throw new RuntimeException("JSON: back");
+		if (usePrev || index <= 0) throw new RuntimeException("back");
 		usePrev = true;
 		index--;
 	}
@@ -329,13 +329,13 @@ public class JSONStream extends Reader {
 	public void expectNext(char c) throws IOException {
 		char n;
 		if ((n = next()) != c)
-			throw new RuntimeException("JSON: Expected '" + c + "', but got '" + n + "' at " + (index-1));
+			throw new RuntimeException("Expected '" + c + "', but got '" + n + "' at " + (index-1));
 	}
 	
 	public void expectNextTrim(char c) throws IOException {
 		char n;
 		if ((n = nextTrim()) != c)
-			throw new RuntimeException("JSON: Expected '" + c + "', but got '" + n + "' at " + (index-1));
+			throw new RuntimeException("Expected '" + c + "', but got '" + n + "' at " + (index-1));
 	}
 	
 	/**
@@ -361,14 +361,14 @@ public class JSONStream extends Reader {
 	private JSONObject nextObject(boolean check) throws IOException {
 		if (check && nextTrim() != '{') {
 			back();
-			throw new RuntimeException("JSON: nextObject: not object at ".concat(Integer.toString(index)));
+			throw new RuntimeException("nextObject: not object at ".concat(Integer.toString(index)));
 		}
 		JSONObject r = new JSONObject();
 		object: {
 		while (true) {
 			String key = nextString(true);
 			if (nextTrim() != ':')
-				throw new RuntimeException("JSON: nextObject: malformed object at ".concat(Integer.toString(index)));
+				throw new RuntimeException("nextObject: malformed object at ".concat(Integer.toString(index)));
 			Object val = null;
 			char c = nextTrim();
 			switch(c) {
@@ -406,7 +406,7 @@ public class JSONStream extends Reader {
 				continue;
 			}
 			if (c == '}') break;
-			throw new RuntimeException("JSON: nextObject: malformed object at ".concat(Integer.toString(index)));
+			throw new RuntimeException("nextObject: malformed object at ".concat(Integer.toString(index)));
 		}
 		}
 		if (eof)
@@ -417,7 +417,7 @@ public class JSONStream extends Reader {
 	private JSONArray nextArray(boolean check) throws IOException {
 		if (check && nextTrim() != '[') {
 			back();
-			throw new RuntimeException("JSON: nextArray: not array at ".concat(Integer.toString(index)));
+			throw new RuntimeException("nextArray: not array at ".concat(Integer.toString(index)));
 		}
 		JSONArray r = new JSONArray();
 		array: {
@@ -459,7 +459,7 @@ public class JSONStream extends Reader {
 				continue;
 			}
 			if (c == ']') break;
-			throw new RuntimeException("JSON: nextArray: malformed array at ".concat(Integer.toString(index)));
+			throw new RuntimeException("nextArray: malformed array at ".concat(Integer.toString(index)));
 		}
 		}
 		if (eof)
@@ -470,7 +470,7 @@ public class JSONStream extends Reader {
 	private String nextString(boolean check) throws IOException {
 		if (check && nextTrim() != '"') {
 			back();
-			throw new RuntimeException("JSON: nextString: not string at ".concat(Integer.toString(index)));
+			throw new RuntimeException("nextString: not string at ".concat(Integer.toString(index)));
 		}
 		StringBuffer sb = new StringBuffer();
 		char l = 0;
@@ -501,10 +501,10 @@ public class JSONStream extends Reader {
 	private void skipObject() throws IOException {
 		while (true) {
 			if (nextTrim() != '"')
-				throw new RuntimeException("JSON: skipObject: malformed object at ".concat(Integer.toString(index)));
+				throw new RuntimeException("skipObject: malformed object at ".concat(Integer.toString(index)));
 			skipString();
 			if (nextTrim() != ':')
-				throw new RuntimeException("JSON: skipObject: malformed object at ".concat(Integer.toString(index)));
+				throw new RuntimeException("skipObject: malformed object at ".concat(Integer.toString(index)));
 			char c = nextTrim();
 			switch(c) {
 			case '}':
@@ -530,7 +530,7 @@ public class JSONStream extends Reader {
 				continue;
 			}
 			if (c == '}') return;
-			throw new RuntimeException("JSON: skipObject: malformed object at ".concat(Integer.toString(index)));
+			throw new RuntimeException("skipObject: malformed object at ".concat(Integer.toString(index)));
 		}
 	}
 	
@@ -577,7 +577,7 @@ public class JSONStream extends Reader {
 		StringBuffer sb = new StringBuffer();
 		while (true) {
 			char c = next();
-			if (c == 0) throw new RuntimeException("JSON: nextValue: Unexpected end");
+			if (c == 0) throw new RuntimeException("nextValue: Unexpected end");
 			if (c == ',' || c == ']' || c == '}' || c == ':' || c <= ' ') {
 				back();
 				break;
@@ -599,7 +599,7 @@ public class JSONStream extends Reader {
 					// decimal
 					if (str.indexOf('.') != -1 || str.indexOf('E') != -1 || "-0".equals(str))
 //						return new Double(Double.parseDouble(str));
-						throw new RuntimeException("Floating-point values not supported");
+						return str;
 					if (first == '-') length--;
 					if (length > 8) // (str.length() - (str.charAt(0) == '-' ? 1 : 0)) >= 10
 						return new Long(Long.parseLong(str));

@@ -21,9 +21,6 @@ SOFTWARE.
 */
 package cc.nnproject.json;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
 public class JSONArray {
 	
 	protected Object[] elements;
@@ -38,34 +35,24 @@ public class JSONArray {
 	}
 
 
-	public JSONArray(Vector vector) {
-		elements = new Object[count = vector.size()];
-		vector.copyInto(elements);
-	}
-
-	/**
-	 * @deprecated Compatibility with org.json
-	 */
-	public JSONArray(String str) {
-		JSONArray tmp = JSONObject.parseArray(str); // FIXME
-		elements = tmp.elements;
-		count = tmp.count;
-	}
+//	public JSONArray(Vector vector) {
+//		elements = new Object[count = vector.size()];
+//		vector.copyInto(elements);
+//	}
 
 	public Object get(int index) {
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
-		try {
-			Object o = elements[index];
-			if (o instanceof String[])
-				o = elements[index] = JSONObject.parseJSON(((String[]) o)[0]);
-			if (o == JSONObject.json_null)
-				return null;
-			return o;
-		} catch (Exception e) {
-		}
-		throw new RuntimeException("JSON: No value at " + index);
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
+//		try {
+		Object o = elements[index];
+		if (o instanceof String[])
+			o = elements[index] = JSONObject.parseJSON(((String[]) o)[0]);
+		if (o == JSONObject.json_null)
+			return null;
+		return o;
+//		} catch (Exception e) {}
+//		throw new RuntimeException("No " + index);
 	}
 	
 	// unused methods should be removed by proguard shrinking
@@ -105,18 +92,13 @@ public class JSONArray {
 	}
 	
 	public JSONObject getObject(int index) {
-		try {
-			return (JSONObject) get(index);
-		} catch (ClassCastException e) {
-			throw new RuntimeException("JSON: Not object at " + index);
-		}
+		return (JSONObject) get(index);
 	}
 	
 	public JSONObject getObject(int index, JSONObject def) {
 		try {
 			return getObject(index);
-		} catch (Exception e) {
-		}
+		} catch (Exception e) {}
 		return def;
 	}
 	
@@ -125,11 +107,7 @@ public class JSONArray {
 	}
 	
 	public JSONArray getArray(int index) {
-		try {
-			return (JSONArray) get(index);
-		} catch (ClassCastException e) {
-			throw new RuntimeException("JSON: Not array at " + index);
-		}
+		return (JSONArray) get(index);
 	}
 	
 	public JSONArray getArray(int index, JSONArray def) {
@@ -179,7 +157,7 @@ public class JSONArray {
 			if (s.equals("true")) return true;
 			if (s.equals("false")) return false;
 		}
-		throw new RuntimeException("JSON: Not boolean: " + o + " (" + index + ")");
+		throw new RuntimeException("JSON: Not boolean: " + o + " at " + index);
 	}
 
 	public boolean getBoolean(int index, boolean def) {
@@ -191,15 +169,16 @@ public class JSONArray {
 	}
 	
 	public boolean isNull(int index) {
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
 		return elements[index] == JSONObject.json_null;
 	}
 	
 	public void add(Object object) {
-		if (object == this) throw new RuntimeException();
-		addElement(JSONObject.getJSON(object));
+//		if (object == this) throw new RuntimeException();
+//		addElement(JSONObject.getJSON(object));
+		addElement(object);
 	}
 	
 	public void add(JSONObject json) {
@@ -226,45 +205,45 @@ public class JSONArray {
 	 * @deprecated
 	 */
 	public void set(int index, Object object) {
-		if (object == this) throw new RuntimeException();
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
-		elements[index] = JSONObject.getJSON(object);
+//		if (object == this) throw new RuntimeException();
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
+		elements[index] = object/*JSONObject.getJSON(object)*/;
 	}
 	
-	public void set(int index, JSONObject json) {
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
-		elements[index] = json;
-	}
+//	public void set(int index, JSONObject json) {
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
+//		elements[index] = json;
+//	}
 	
-	public void set(int index, String s) {
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
-		elements[index] = s;
-	}
+//	public void set(int index, String s) {
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
+//		elements[index] = s;
+//	}
 	
 	public void set(int index, int i) {
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
 		elements[index] = new Integer(i);
 	}
 
 	public void set(int index, long l) {
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
 		elements[index] = new Long(l);
 	}
 	
 	public void set(int index, boolean b) {
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
 		elements[index] = new Boolean(b);
 	}
 	
@@ -272,17 +251,18 @@ public class JSONArray {
 	 * @deprecated
 	 */
 	public void put(int index, Object object) {
-		if (object == this) throw new RuntimeException();
-		insertElementAt(JSONObject.getJSON(object), index);
+//		if (object == this) throw new RuntimeException();
+//		insertElementAt(JSONObject.getJSON(object), index);
+		insertElementAt(object, index);
 	}
 	
-	public void put(int index, JSONObject json) {
-		insertElementAt(json, index);
-	}
-	
-	public void put(int index, String s) {
-		insertElementAt(s, index);
-	}
+//	public void put(int index, JSONObject json) {
+//		insertElementAt(json, index);
+//	}
+//	
+//	public void put(int index, String s) {
+//		insertElementAt(s, index);
+//	}
 	
 	public void put(int index, int i) {
 		insertElementAt(new Integer(i), index);
@@ -297,7 +277,8 @@ public class JSONArray {
 	}
 	
 	public boolean has(Object object) {
-		return _indexOf(JSONObject.getJSON(object), 0) != -1;
+//		return _indexOf(JSONObject.getJSON(object), 0) != -1;
+		return _indexOf(object, 0) != -1;
 	}
 	
 	public boolean has(int i) {
@@ -313,11 +294,13 @@ public class JSONArray {
 	}
 	
 	public int indexOf(Object object) {
-		return _indexOf(JSONObject.getJSON(object), 0);
+//		return _indexOf(JSONObject.getJSON(object), 0);
+		return _indexOf(object, 0);
 	}
 
 	public int indexOf(Object object, int index) {
-		return _indexOf(JSONObject.getJSON(object), index);
+//		return _indexOf(JSONObject.getJSON(object), index);
+		return _indexOf(object, index);
 	}
 	
 	public void clear() {
@@ -326,16 +309,17 @@ public class JSONArray {
 	}
 	
 	public boolean remove(Object object) {
-		int i = _indexOf(JSONObject.getJSON(object), 0);
+//		int i = _indexOf(JSONObject.getJSON(object), 0);
+		int i = _indexOf(object, 0);
 		if (i == -1) return false;
 		remove(i);
 		return true;
 	}
 	
 	public void remove(int index) {
-		if (index < 0 || index >= count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
+//		if (index < 0 || index >= count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
 		count--;
 		int size = count - index;
 		if (size > 0)
@@ -347,9 +331,9 @@ public class JSONArray {
 		return count;
 	}
 	
-	public boolean isEmpty() {
-		return count == 0;
-	}
+//	public boolean isEmpty() {
+//		return count == 0;
+//	}
 	
 //	public String toString() {
 //		return build();
@@ -415,23 +399,23 @@ public class JSONArray {
 //		return s.toString();
 //	}
 
-	public Enumeration elements() {
-		return new Enumeration() {
-			int i = 0;
-			
-			public boolean hasMoreElements() {
-				return i < count;
-			}
-			
-			public Object nextElement() {
-				Object o = elements[i];
-				if (o instanceof String[])
-					o = elements[i] = JSONObject.parseJSON(((String[]) o)[0]);
-				i++;
-				return o == JSONObject.json_null ? null : o;
-			}
-		};
-	}
+//	public Enumeration elements() {
+//		return new Enumeration() {
+//			int i = 0;
+//			
+//			public boolean hasMoreElements() {
+//				return i < count;
+//			}
+//			
+//			public Object nextElement() {
+//				Object o = elements[i];
+//				if (o instanceof String[])
+//					o = elements[i] = JSONObject.parseJSON(((String[]) o)[0]);
+//				i++;
+//				return o == JSONObject.json_null ? null : o;
+//			}
+//		};
+//	}
 	
 	public void copyInto(Object[] arr) {
 		copyInto(arr, 0, arr.length);
@@ -445,22 +429,22 @@ public class JSONArray {
 		}
 	}
 
-	public Vector toVector() {
-		int size = count;
-		Vector copy = new Vector(size);
-		for (int i = 0; i < size; i++) {
-			Object o = elements[i];
-			if (o instanceof String[])
-				o = elements[i] = JSONObject.parseJSON(((String[]) o)[0]);
-			if (o instanceof JSONObject) {
-				o = ((JSONObject) o).toTable();
-			} else if (o instanceof JSONArray) {
-				o = ((JSONArray) o).toVector();
-			}
-			copy.addElement(o);
-		}
-		return copy;
-	}
+//	public Vector toVector() {
+//		int size = count;
+//		Vector copy = new Vector(size);
+//		for (int i = 0; i < size; i++) {
+//			Object o = elements[i];
+//			if (o instanceof String[])
+//				o = elements[i] = JSONObject.parseJSON(((String[]) o)[0]);
+//			if (o instanceof JSONObject) {
+//				o = ((JSONObject) o).toTable();
+//			} else if (o instanceof JSONArray) {
+//				o = ((JSONArray) o).toVector();
+//			}
+//			copy.addElement(o);
+//		}
+//		return copy;
+//	}
 
 	void addElement(Object object) {
 		if (count == elements.length) grow();
@@ -468,9 +452,9 @@ public class JSONArray {
 	}
 	
 	private void insertElementAt(Object object, int index) {
-		if (index < 0 || index > count) {
-			throw new RuntimeException("JSON: Index out of bounds: " + index);
-		}
+//		if (index < 0 || index > count) {
+//			throw new RuntimeException("JSON: Index out of bounds: " + index);
+//		}
 		if (count == elements.length) grow();
 		int size = count - index;
 		if (size > 0)

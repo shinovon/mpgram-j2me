@@ -1,3 +1,4 @@
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
@@ -477,11 +478,11 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 
 	static void display(Displayable d, boolean back) {
 		if (d instanceof Alert) {
-			display.setCurrent((Alert) d, dialogsList != null ? (Displayable) dialogsList : authForm);
+			display.setCurrent((Alert) d, dialogsList != null ? (Displayable) dialogsList : authForm != null ? authForm : loadingForm);
 			return;
 		}
 		if (d == null)
-			d = dialogsList != null ? (Displayable) dialogsList : authForm;
+			d = dialogsList != null ? (Displayable) dialogsList : authForm != null ? authForm : loadingForm;
 		display.setCurrent(d);
 	}
 
@@ -559,6 +560,15 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 			}
 		}
 		return new String(buf, 0, i);
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream(i > 0 ? i : 1024);
+//		try {
+//			byte[] b = new byte[128];
+//			int r;
+//			while ((r = in.read(b)) != -1) baos.write(b, 0, r);
+//			return baos.toString();
+//		} finally {
+//			baos.close();
+//		}
 	}
 	
 //	private static byte[] get(String url) throws IOException {

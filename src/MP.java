@@ -1,4 +1,3 @@
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
@@ -31,6 +30,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 	private static final int RUN_DIALOGS = 2;
 	private static final int RUN_CHAT = 3;
 	private static final int RUN_SEND = 4;
+	private static final int RUN_TIMEOUT_EXIT = 5;
 	
 	private static MP midlet;
 	private static Display display;
@@ -60,7 +60,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 	// settings
 	private static String user;
 	private static String instance = "http://mp2.nnchan.ru/";
-	private int tzOffset;
+	private static int tzOffset;
 	
 	private static JSONArray dialogs;
 	
@@ -79,6 +79,13 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		if (midlet != null) return;
 		midlet = this;
 		display = Display.getDisplay(this);
+		
+		String p = System.getProperty("microedition.configuration");
+		if (p != null && p.indexOf("1.1") != -1) {
+			display.setCurrent(new Alert("", "Use mpgram web!", null, null));
+			start(RUN_TIMEOUT_EXIT);
+			return;
+		}
 		
 		exitCmd = new Command("Exit", Command.EXIT, 10);
 		backCmd = new Command("Back", Command.BACK, 10);
@@ -269,6 +276,14 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 				e.printStackTrace();
 				display(errorAlert(e.toString()), chatForm);
 			}
+			break;
+		}
+		case RUN_TIMEOUT_EXIT: {
+			try {
+				Thread.sleep(3000);
+			} catch (Exception e) {}
+			notifyDestroyed();
+			break;
 		}
 		}
 		running = false;
@@ -500,7 +515,7 @@ public class MP extends MIDlet implements CommandListener, Runnable {
 		HttpConnection hc = null;
 		InputStream in = null;
 		try {
-			hc = open(instance.concat("api.php?method=").concat(url));
+			hc = open(instance.concat("api.php?v=2&method=").concat(url));
 			hc.setRequestMethod("GET");
 			int c;
 			if ((c = hc.getResponseCode()) >= 400 && c != 500) {

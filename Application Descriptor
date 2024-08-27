@@ -1,7 +1,7 @@
 MIDlet-Vendor: nnproject
-MIDlet-Version: 0.2.1
+MIDlet-Version: 0.2.2
 MicroEdition-Configuration: CLDC-1.0
-MIDlet-1: MPGram,,MP
+MIDlet-1: MPGram Mini,,MP
 MIDlet-Name: MPGram
 MicroEdition-Profile: MIDP-1.0
-MIDlet-Jar-URL: mpgram3.jar
+MIDlet-Jar-URL: mpgram_mini.jar

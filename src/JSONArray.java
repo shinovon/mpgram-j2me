@@ -510,7 +510,7 @@ public class JSONArray {
 			throw new RuntimeException("JSON: Index out of bounds: " + index);
 		}
 		if (count == elements.length) grow();
-		int size = count - index;
+		int size = count - index - 1;
 		if (size > 0)
 			System.arraycopy(elements, index, elements, index + 1, size);
 		elements[index] = object;

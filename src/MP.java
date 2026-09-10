@@ -68,6 +68,7 @@ public class MP extends MIDlet
 		{
 			"ar",
 			"az",
+			"be",
 			"ca",
 			"de",
 			"en_gb",
@@ -84,6 +85,7 @@ public class MP extends MIDlet
 		{
 			"\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
 			"Azərbaycan",
+			"Беларуская",
 			"Català",
 			"Deutsch",
 			"English (UK)",

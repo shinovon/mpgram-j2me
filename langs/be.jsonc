@@ -292,8 +292,8 @@
 	"HoldInRAM": "Утрымліваць у аператыўнай памяці",
 	"Store": "Захоўваць",
 	"HoldInRAMandStore": "Утрымліваць у аператыўнай памяці і захоўваць",
-	"AvatarsCacheThreshold": "Парог кэша аватараў",
-	"ProfilesCacheThreshold": "Парог кэша профіляў",
+	"AvatarsCacheThreshold": "Парог кэшу аватараў",
+	"ProfilesCacheThreshold": "Парог кэшу профіляў",
 	"RMSCacheCount": "Захавана кэшу: ",
 	
 	// Notifications settings
@@ -345,7 +345,7 @@
 	"NotEnoughMemory_Alert": "Недастаткова памяці",
 	"DownloadCanceled_Alert": "Спампоўванне скасавана",
 	"DownloadedTo": "Спампавана ў ",
-	"ChooseDownloadMethod_Alert": "Выберыце спосаб спампоўвання",
+	"ChooseDownloadMethod_Alert": "Выберыце спосаб спампавання",
 	"FailedToSaveSettings_Alert": "Не ўдалося захаваць налады",
 	"PiglerNotAvailable_Alert": "Pigler API выбраны, але ён недаступны, \nспампуйце яго са старонкі https://nnproject.cc/pna",
 	"DeleteNMessage_Alert": "Выдаліць % паведамленне?",
